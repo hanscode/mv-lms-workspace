@@ -1,0 +1,684 @@
+Project Overview
+The purpose of this project is to rebuild the McKinney-Vento training site. The training site will be custom-built, removing the restrictions and structural necessities that WordPress implements, and will be focused on the following goals: 
+
+To make onboarding and access to courses as easy as possible for all users, whether it’s their first time or they’re a returning user. 
+To remove all “stop points” from the user experience, so that there is never a moment the user isn’t sure what to do next. 
+Improve reporting for both MV Administrators and Liaisons. 
+Reduce administrative complexity. 
+
+The language framework will be determined once the specification has been approved.
+Leadership Notes
+We have an interesting challenge with the learning platform based on what we’ve learned over the course of the last few years. We want to build a platform that will allow for easy registration from essential staff, with the least amount of steps possible, which doesn’t require email validation/verification, domain verification, or a complex registration, and make sure the solution doesn’t add-in additional complexity or time during the launch process, or require intervention from the support team. Finally, we want to do our best to prevent unauthorized users or non-paying users from accessing the system.
+
+The solution I’m proposing, detailed below, while it initially may sound complex, is aimed at resolving all of these issues and making the registration process as streamlined as possible. 
+
+Major points: 
+
+Will not require email verification for registration. 
+Passwordless system that will use magic link email to login.
+No email domain verification during registration, users can use any email address they have access to.
+Each school district, region and state will have a unique registration URL, with a path to easy registration for the user, regardless of role. 
+No longer need separate registration forms for free liaisons or substitute teachers. 
+
+
+Training Portal
+Compatibility & Accessibility
+The training portal will be designed and developed with both accessibility and compatibility in mind. The platform will be kept in compliance with the ADA requirements for websites and platforms.
+
+The portal will also be available on both desktop and mobile, ensuring that staff without access to a work or personal computer will be able to complete the training if they have a mobile device. 
+Registration Pages
+The training portal will not have a “register page” or “register link” available from the main page. On creating a state, region or school district within the administrative back-end, a unique URL will be generated, for example: 
+
+https://training.mckinney-venro.org/jfo12
+
+This link is provided to the client who is purchasing the training during the launch process who can then share this link with their liaisons and/or essential staff, and the interface will be dependent on the location tier that the link is generated from. 
+
+The design of these pages will be focused on making every choice and action deliberate and obvious, with guided indicators letting users know exactly what they need to do through each step of the process, and what to do if they’re unable to take an action. 
+
+State Registration Page
+If our client is at the state level, they’ll be provided a link which allows people to register for training anywhere within the state. The state registration page when loaded will show the following information: 
+
+Headline - “Select your region from the list below.”
+Instructional Text - “Please find your region from the list below, and click the “Select Region” button next to the region for your school district. You can use the search box below to quickly find your region.”
+A text search input box.
+A table displaying all regions within the state. 
+Help text and submit ticket CTA for user’s that don’t see their region listed. 
+
+A user can either scroll through the list of regions, or they can use the text search input which will filter the list of regions based on their search. 
+
+The table will display the following information: 
+
+Region Name
+Name of Regional Coordinator (if applicable)
+“Select Region” button.
+
+On clicking the “Select Region” button the user will be brought to the region registration page. 
+
+Region Registration Page
+If our client is at the region level, they’ll be provided a link which allows people to register for training anywhere within the region. The region registration page when loaded will show the following information: 
+
+Headline - “Select your school district from the list below..”
+Instructional Text - “Please find your school district from the list below, and click the “Select School District” button next to the school district you work for. You can use the search box below to quickly find your school district.”
+A text search input box.
+A table displaying all school districts within the region. 
+Help text and submit ticket CTA for user’s that don’t see their school district listed. 
+
+A user can either scroll through the list of school districts, or they can use the text search input which will filter the list of school districts based on their search. 
+
+The table will display the following information: 
+
+School District Name
+Name of District Liaison(s) (if applicable)
+“Select School District” button.
+
+On clicking the “Select School District” button the user will be brought to the school district registration page. 
+
+School District Registration Page
+If our client is at the school district level, they’ll be provided a link which allows people to register for training anywhere within the school district. The school district registration page when loaded will show the following information: 
+
+Headline - “Register for McKinney-Vento training in %district-name%.”
+Select position Interface
+First, the user will be prompted to select their position. This will be similar to the updated registration screen in the current LMS, with detailed descriptions of each role.
+Essential Staff - I am a district or school employee or substitute teacher. I would like to take my McKinney-Vento training as instructed by my district liaison/homeless program coordinator.
+Community Partner - I am a community partner and would like to take the McKinney-Vento training for community partners working with school districts to help children experiencing homelessness. 
+District Liaison - I am a district or school liaison or homeless program coordinator. I would like to take the McKinney-Vento training for district liaisons. I oversee training in my school district or school and need access to district reports and liaison resources. 
+
+The user will then be brought through the remaining registration process. 
+
+First Name, Last Name, Email Address, Confirm Email address
+If Staff
+Select your Role
+Select your School
+Registration complete
+If Liaison
+District or School Liaison
+If District - Registration complete
+If school
+Select your school
+Registration complete
+If Community Partner
+Registration Complete
+
+
+Essential Staff Registration
+
+The essential staff registration involves the user selecting their role, and their school. 
+They will be provided the following list, each with a “Select Role” button:
+
+Administration: Principals, Superintendents, School Leaders, School Boards
+Extracurricular Staff: Coaches, Assistants, P.E. Teachers, Custodians/Janitors, School Safety/Security.
+Counselors and Social Worker: School Counselors, Social Workers, School Psychologists
+District Office - Users who work with the school district’s district office. 
+Early Childhood: Child Care and Preschool Directors, Classroom Teachers
+Enrollment: Office Staff, School Secretaries, Pupil Accounting, Registrars, and Human Resources.
+Healthcare Professionals: Nurses, Nurse Aids
+Food Service: Food Service Directors, Line Staff, Cafeteria workers.
+Media Centers and Librarians: School Librarians, Media Specialists, Library Directors
+Special Education: Special Education Directors, Teachers, Paraprofessionals
+Teachers: Classroom Teachers, Substitute Teachers, Teacher Assistants/Aids
+Title I: Coordinators, State & Federal Program Supervisors, Title I staff
+Transportation: Transportation Directors, Coordinators and Drivers
+
+Below this interface will be instructional text for the user, letting them know that if their specific role isn’t listed, they should choose the role that most closely matches their current role. 
+
+Once the user has selected their role, they’ll be shown a table of all schools within their school district with a search field above the table. 
+
+The table will display the following information: 
+
+School Name
+“Select School” button.
+
+The user can scroll through the list or use the search bar to search for their school which will filter the table to show matching results. Once a school is selected, their registration is complete and they will be redirected to their learning dashboard. 
+Liaison Registration
+For liaisons, we’ll next determine whether they are a district liaison or a school liaison, they will be shown two options: 
+
+I am a school liaison, I oversee training for a school within my school district. 
+Note: If you oversee multiple schools as a liaison but are not the district liaison, select this option and select any school you oversee in the next section.
+I am a district liaison, I oversee training for my entire school district. 
+
+If the user selects district liaison, they’re registration is complete and they’ll be redirected to their learning dashboard. 
+
+If the user selects school liaison, they’ll be shown a table of all schools within their school district with a search field above the table. 
+
+The table will display the following information: 
+
+School Name
+“Select School” button.
+
+The user can scroll through the list or use the search bar to search for their school which will filter the table to show matching results. Once a school is selected, their registration is complete and they will be redirected to their learning dashboard. 
+Community Partner Registration
+On selecting the community partner registration, the user’s registration is complete and they’ll be redirected to their learning dashboard. 
+
+Registration Page Notes
+The registration page links are downward compatible. Meaning if our client is at the state, they can send their regional coordinates the state link, and regional coordinators can get their region registration by selecting their region and sending that link out to liaisons. Liaisons can follow the same process, by selecting their school district from the region page, and copying that link to all of their staff.
+
+The system will also allow quick export to CSV of all registration links within a state/region that can be sent to state or regional coordinators to share with their liaisons. 
+User Login
+User login will be done via a magic link, and will not require a password. When returning to the portal platform, they will be able to enter their email address from the main page. 
+
+They will receive the following message:
+
+“We’ve just sent you an email with a link to login. Click the login button in this email to access the training portal.”
+
+After clicking on the link in the email the user will be redirected to their learning dashboard.
+
+The token in the email will also not expire for 30 days, and will not expire after use, meaning even if their security software scans the link it will still be usable when the user clicks it. 
+Learning Dashboard
+The learning dashboard will be separated into two sections. The first section will include courses specific to the user’s role, and are courses required for the user to complete their required training and stay in compliance with the McKinney-Vento act. This will be clearly marked and described in the course section.
+
+Below this, will be a list of optional courses. These are not courses for other roles, but additional courses MV provides and may provide in future to add additional value to our training for respective roles. If there are no additional courses available, this section will be hidden.
+
+The display of courses will be determined during the design phase but will likely mirror the updated design of our learn page on the current WordPress site and will additionally display the time expected to complete the course. 
+
+A completed course will show a completion ribbon on the course as well as a link to download the completion certificate. 
+
+Displayed Courses
+
+The courses available to the user depend on the settings of the client and any other clients above it in the Option hierarchy. 
+
+If client specific courses is not toggled for the client, or any clients above it in the hierarchy, the user will see any mandatory and optional courses including courses that are marked client specific. 
+
+If client specific courses is toggled for the client, or any clients above it in the hierarchy, the user will only see the selected client specific courses.
+
+If the client and the client above it in the Option hierarchy have a different selection of client specific courses, the user will see client specific courses from both clients. 
+
+If there is a mix, i.e. the client has client specific courses but a parent client (above it in the Option hierarchy) does not have client specific courses toggled, the user will see all non-client specific optional and mandatory courses and the client specific courses selected for the client.   
+Taking a Course
+By clicking on a course the user will be brought through the course content. Courses will be broken down into lessons and each lesson will be made up of sections (section types described in administration section), and the title of the lesson will be displayed along with the content. At the top of the course interface will be a navigation guide, showing the user the amount of lessons remaining to complete the course. 
+
+At the end of the course, the user will be automatically emailed their completion certificate as well as offered a download button to download their completion certificate. They can then return to the learning dashboard. 
+
+Courses will be role-limited, so only courses relevant to the role of the user, as well as optional courses based on client access will be displayed. 
+
+Course Timer
+
+The LMS should track the amount of time a user spends taking a course. This will be a timer that runs in the background when a user is taking a course. The total time it takes a user to complete a course should be displayed on the certificate, and the total time should show up on the reports once the course is completed. 
+
+This is for school districts that award staff Personal Development credits, some teachers unions have negotiated anything taking more than 3 hours they should receive credit for, so this would apply to our liaison courses (and future staff courses).
+
+The time will be constructed according to this diagram: 
+
+
+
+This same time function will be used to check if a lesson’s minimum time has been reached. 
+Resource Library
+The resource library will be available to both district and school liaisons and will operate similar to how it works now, but will also include a search functionality and will be easily managed via the administration portal. 
+
+The resource library will be available to all liaisons, including free liaisons.
+Reports
+The reporting dashboard will be slightly different depending on the type of user accessing it, but will allow for immediate display of completion data, as well as downloadable CSVs.
+
+Reports will be focused on two main data points: 
+
+Compliance - The number of users that have registered for training and the percentage of users that have completed training. 
+Completion - The list of users within the selected area and their completion status. 
+All reports will be updated once per day at midnight EST. The “last updated” date and time will be shown on all reporting dashboards. 
+
+There will be three dashboards depending on the role of the user viewing. Each role described can also view the lower tier dashboard. 
+
+State Overview - For State Coordinators
+Regional Overview - For Regional Coordinators
+District Overview - For District Liaisons
+School Overview - For School Liaisons 
+
+Completion data for liaisons or staff will be based on the course settings determining which roles a course is for and whether it is a mandatory course for compliance. Completing one mandatory course for compliance for the user’s role will designate them as having completed their training. 
+
+All reports by default will show data for the current year. A school year dropdown will be available that when clicked will show the data for prior school years. 
+
+State Overview
+When a state coordinator visits their reporting dashboard, they will see compliance data by region, these will include the following information: 
+
+Region Name
+Number of registered liaisons across the region.
+Percentage of registered liaisons who have completed training.
+Number of registered essential staff across the region.
+Percentage of registered essential staff who have completed training.
+Percentage of total users who have completed training.
+See Regional Breakdown (Button)
+
+Note: Community partners and their completion data will not be included in reports. 
+
+Two CSV exports will be available: 
+
+Compliance by region (the same data as above but in CSV format)
+Completion Data (Liaison) - A list of liaisons across the state and their completion progress. This export will include
+Region Name
+District Name
+School (when applicable, for school liaisons)
+First Name
+Last Name
+Email Address
+Completed
+Completion Date
+Total Time Spent
+Completion Data (Essential Staff) - A list of ES across the state and their completion progress. This export will include
+Region Name
+District Name
+School Name
+First Name
+Last Name
+Email Address
+Role
+Completed
+Completion Date
+Total Time Spent
+
+The coordinator can click on the regional breakdown button to show the regional overview. 
+
+Regional Overview
+When a regional coordinator visits their reporting dashboard, they will see compliance data by district, these will include the following information: 
+
+District Name
+Number of registered liaisons across the region.
+Percentage of registered liaisons who have completed training.
+Number of registered essential staff across the region.
+Percentage of registered essential staff who have completed training.
+Percentage of total users who have completed training.
+See District Breakdown (Button)
+
+Note: Community partners and their completion data will not be included in reports. 
+
+This report will also highlight districts of concern. A district of concern is a school district that has less than 20% completion progress across all users, within one month of their launch date. The launch date is determined on the client level in the back-end administration. If both a state and a district are clients, the district client launch date will be used for this reporting. 
+
+
+Two CSV exports will be available: 
+
+Compliance by District (the same data as above but in CSV format)
+Completion Data (Liaison) - A list of liaisons across the region and their completion progress. This export will include
+District Name
+School (when applicable, for school liaisons)
+First Name
+Last Name
+Email Address
+Completed
+Completion Date
+Completion Data (Essential Staff) - A list of ES across the region and their completion progress. This export will include
+District Name
+School Name
+First Name
+Last Name
+Email Address
+Role
+Completed
+Completion Date
+
+Clicking on “See District Breakdown” will bring the user to the district overview. 
+District Overview
+When a district liaison visits their reporting dashboard, they will see compliance data by school, these will include the following information: 
+
+School Name
+Number of school liaisons across the district.
+Percentage of registered school liaisons who have completed training.
+Number of registered essential staff across the district.
+Percentage of registered essential staff who have completed training.
+Percentage of total users who have completed training.
+Download Completion Data
+
+Note: Community partners and their completion data will not be included in reports. 
+
+This report will also highlight schools of concern. A school of concern is a school that has less than 20% completion progress across all users, within one month of their launch date. The launch date is determined on the client level in the back-end administration. The district client launch date will be used for this reporting. 
+
+
+Two CSV exports will be available: 
+
+Compliance by School (the same data as above but in CSV format)
+Completion Data (Liaison) - A list of school liaisons across the district and their completion progress. This export will include
+School Name
+First Name
+Last Name
+Email Address
+Completed
+Completion Date
+Completion Data (Essential Staff) - A list of ES across the district and their completion progress. This export will include
+School Name
+First Name
+Last Name
+Email Address
+Role
+Completed
+Completion Date
+Program Reports
+Program leaders will be able to access reports in two ways: 
+
+Via automatic email notifications depending on program settings.
+Via the reports page, under a new option in the dropdown “Programs”. Selecting this dropdown will show another dropdown which will allow them to select their program (if there’s only one it will be selected by default). 
+Selecting a program will show a checkbox, “Include only users who have not completed training”, which will filter the report to only show users who have not yet completed training. With this box unchecked, the user will be shown all program participants. 
+
+The reports will mirror our current reports, however liaisons and staff will be shown on the same report.
+
+First Name
+Last Name
+State
+Region
+District
+School
+Essential Group/Liaison
+This will either show the Essential Group the user is in, or will say “Liaison”. 
+
+On reports where all users are shown:
+
+Completed Course
+Completed Date
+
+Depending on program settings, the report CSV will be sent to all program leaders on the schedule requested, however the user can also see the current program results on the reports page at any time. 
+
+By default, admins will be able to view the reports from all programs currently running. 
+Email Reminders
+Email reminders are related to programs (see program management in administration), and will be sent to Liaisons and Essential Staff based on the settings provided when the program was created. The email will include: 
+
+Reminder Text
+Link to the training site
+The required course for their group/role. 
+Date of training deadline
+
+In addition to scheduled reminders, this email will go out to all users who have not yet completed training 1 week before the deadline, and 48 hours before the deadline. 
+
+Administration
+Course Management
+Creating courses in the back-end will involve creating lessons, each lesson can be made up of one or more sections, which are all displayed within the lesson content.
+
+The user can insert sections, depending on the content they would like to be shown within the lesson. 
+
+The section types are: 
+
+Introduction
+Text Block
+Text Block with Image
+Video Block
+File Block
+HTML Course (Articulate export, xAPI, SCORM. 
+Quiz
+
+Introduction Block
+The intro block is intended to be used on the first section of a lesson. 
+
+This block has fields for:
+Image
+Header.  150 character limit
+Subheader. 250 character limit. 
+
+Text Block
+This block has fields for:
+Rich Text Editor
+
+Image Block
+This block has fields for: 
+Image Upload
+
+Text & Image Block
+This block has fields for:
+Rich Text
+Image
+
+Video Block
+This block has fields for:
+Video Embed Code  (Youtube / Vimeo) 
+
+File Block
+This block has fields for: 
+File Name
+File Description 
+File Upload field 
+
+
+For HTML courses, the interface will allow for a .zip upload of the course content and will embed the course into the section. 
+
+For text & videos, it will allow for a vimeo embed, and a text section. Each section should be made up of 1 video and accompanying text. The text will also allow for inserting images. 
+
+For Quizzes, an interface for creating one or more questions and the available multiple choice answers that will be available, as well as the mandated score for moving to the next lesson. The user will be required to repeat the quiz until they have successfully gotten the required score. 
+
+There will be a lesson navigator so the user can review previous sections if needed as well as see the total number of sections in the course. 
+
+For each lesson, a minimum time can optionally be set, which will disable the “Next” button until the time has expired, preventing the user from navigating through content without spending time on the page. 
+
+Additionally, course settings will be available to: 
+
+Input the time to complete for the course
+Add a Course image
+Add a Course description
+Add option to make this course client-specific
+If enabled, will only show to users where the course is selected in client settings.
+The role the course applies to (can select one or more)
+Whether this is an optional or mandatory course.
+Course Year (school year this course is for).
+School Year Management
+School year management will be the feature used to create the upcoming school year. Each year the new school year will be added, making it available for course attribution and reports. The newest school year added will always be considered the current and default school year. 
+User Management
+There will be three use cases for user management: 
+
+Creating a state or regional coordinator account.
+Updating a user’s account who incorrectly registered.
+Creating an administrator account
+
+To create a new user account for a state or regional coordinator, the administrator will input the following options: 
+
+User Roles: 
+State Coordinator
+Regional Coordinator
+Administrator
+If State Coordinator
+Select State
+If Regional Coordinator
+Select State
+Select Region (can select one or more)
+If Administrator
+No additional fields. 
+First Name
+Last Name
+Email Address
+
+Creation of other user accounts won’t be needed as unless the option is missing (in which case the support response is to create it), users should not need support assistance to create accounts.
+
+To update a user account, the administrator will search the user by email address, and click “Update User”. Available filters for finding users will be available by state, region, district, school and role. 
+
+The following options will be available: 
+
+Update First Name
+Update Last Name
+Update Email Address
+Change Location
+This will provide the standard state - region - district - school selection. 
+If district is selected, the user can select one or more districts. 
+The user is assigned the appropriate role based on the selection.
+Change ES Role - This option is only shown if the location is on the school level, and will show the available roles to select. Additionally, Community Partner will be shown here, if selected, this will add the user to the CP of the district. 
+
+User Roles
+State Coordinator
+Regional Coordinator
+District Liaison
+School Liaison
+Essential Staff
+Community Partner
+
+Essential Staff Role Management
+This section allows the admin to update or add the roles available to essential staff during registration. This will allow the admin to update the name of the role and the description, or add additional roles. 
+
+User Own Account Management
+
+A user can also manage some of their own account details on their own account details page. 
+This page will display this account information: 
+
+User Role 
+If State Coordinator
+State
+If Regional Coordinator
+State
+Region (can select one or more)
+First Name
+Last Name
+Email Address
+
+
+The following options will be available to edit about the user: 
+
+Update First Name
+Update Last Name
+Update Email Address
+
+If the user role is Essential Staff, it will show the Essential Staff role in the User Role field. In addition, if a user is Essential Staff, they will also be able to edit: 
+The Essential Staff Role (show possible values from Essential Staff Role Management) 
+
+Client Management
+This section will allow administrators to update or add clients.
+
+When creating a new client or editing an existing client, the following options are available: 
+
+Client Name
+Client Active (checkbox)
+Manage Client email domains
+Active Products
+Liaison Training
+Essential Staff Training
+Launch Date (this will display for each school year in the system).
+Only show client-specific courses
+If enabled, users for this client won’t see the standard courses, but only courses that are client-specific and applied to this client. 
+
+Below this interface will be a list of “Client-Specific Courses” with a checkbox next to each. Checking the box will show the selected client-specific course to users who belong to this client. 
+
+Option Management
+Option management will work similarly to how it does in the current system, but the interface will be much simpler. When opening option management, first the user will be prompted to select a state. 
+
+On selecting a state, they will be shown:
+
+A “Edit State” button.
+A “Copy Registration Link” button. 
+A table of state coordinators, with links to edit the user.
+A table of regions within that state with the option to view or edit the region.
+
+On viewing a region, the user will be shown:
+
+An “Edit Region” button.
+A “Copy Registration Link” button. 
+A table of regional coordinators, with links to edit the user. 
+A table of school districts within that state with the option to view or edit the district.
+
+On viewing a district, the user will be shown: 
+
+An “Edit District” button.
+A “Copy Registration Link” button. 
+A table of district liaisons, with links to edit the user. 
+A table of schools within that district with the option to view or edit the school.
+
+On viewing a school, the user will be shown: 
+
+An “Edit School” button.
+A table of school liaisons, with links to edit the user.
+A table of essential staff, with links to edit the user. 
+
+When editing an option, the following information will be shown: 
+
+Edit Option Name
+Client Management
+Inherited Clients
+
+One or more clients can be assigned to the same option. As long as one client is active, users within the option will be able to access the system. When two clients are in an option, the lowest tier option will be used for the client launch date. For available products, products from both clients will be used, meaning if a state has liaison training and is a client of an option and separately a school district has ES training, and is also a client, then liaison and ES training will be available for users within that district.
+
+On the inherited clients table and the clients table, the active product(s) available to the client will also be shown.
+
+Roles within a school will be universal and will not need to be created on schools individually. The same with Community Partners. 
+Program Creation
+The program management interface will allow a member of the support team to create a program for a state, region, district or school. A program can include users/trainees from one or more districts, cross districts or schools, depending on the user list provided during program creation. 
+
+A program will be created in 4 steps. After each step, the program creation process will be saved on the backend so the user can pause and resume program creation. This is to allow users flexibility in program creation, lessen front end resources, and allow for recovery in times of technical failure. 
+
+The 4 steps to create a program is as follows:   
+
+Step1: Client Selection & Program Name
+
+From a dropdown list of existing clients in the system, the user will select the client that the program should be associated with. Only active clients will be able to be selected from this dropdown. 
+
+They will then be able to name the program. This is important as some clients may wish to run multiple programs (for each district) to keep information and reporting separate. 
+
+Step 2: User Import
+
+Once a client is selected, the upload interface will be displayed for the user to upload a list of users who will be included in the program, this can include both existing users and users that require registration. 
+
+The CSV template to be used for user import can be downloaded from within this interface and will provide columns for the following fields: 
+
+First Name
+Last Name
+Email Address
+MV Option ID
+Program Leader (Yes/No)
+
+When the import file is uploaded, the system will perform the following checks: 
+
+Determine which users, by email address, are already users in the system. For existing users, it will confirm whether the user is already a user within the option ID referenced. If not, it will move the user to that option ID. 
+Determine which users, by email address, need to register on the training site. The system will create a user account and place them in the appropriate option. 
+
+Note: Users designated as a program leader must be in a higher tier option than all users that are included in the program, this will generally mean the user must be a regional coordinator or district liaison. 
+
+Step 3: Program Settings
+
+The program settings will include the following options: 
+
+Program Setup:
+
+Deadline - What date do all program members need to complete training by? 
+
+Notifications: 
+
+How often should reminders be sent to program participants to complete their training? 
+Daily
+Weekly
+Custom Dates (can select one or more dates to send out reminders)
+
+How often should program leaders be sent progress reports?
+Daily
+Weekly
+
+Should progress reports show all participants or only participants that have not completed training?
+All
+Not Completed
+
+Should program leaders be emailed participant certificates on course completion?
+Yes
+No
+
+Step 4: Create Program
+
+On program creation, all users who are not yet registered, but were included in the import, will have user accounts created for them. 
+
+All program participants will be sent an email notifying them that the new year's courses are ready for them to complete. 
+
+The email will include:
+
+The deadline to complete training.
+A notification that they will receive reminder emails until they complete their training. 
+The frequency of reminders sent based on program settings will also be included.
+The user’s login email address.
+
+They will be sent a login link just as if they had requested a magic login link. If they click the clink after it expires, they will be asked to input the user’s login email address to get a new one. 
+Resource library management
+The resource library will allow for management of uploaded files as well as categorization of resources. This page will list all resources currently available: 
+
+Resource Name
+Link to Resource
+Resource Category
+
+At the top of this page will be two buttons: 
+
+Manage Categories - allowing for creation and editing of resource categories. These will be used for front-end filters on the resource library. 
+Add Resource
+Resource Name
+Resource Upload
+Select Category
+Resource description
+
+Resource description will only be visible on the edit and create pages on the admin side, but will be visible on the resource page for users. 
+
+Completion certificate
+The completion certificate management will allow for a new PNG background which will be used for certification generation. All certificates generated will use this background and automatically place the course name, user’s name, total time taken on the course, and date of completion. 
+Reports
+Administrators will be able to access the same reports as users of different roles, which will work the same way: 
+
+State Overview
+Regional Overview
+District Overview
+
+Additionally, administrators will have access to the following reports: 
+
+Client Report - A report which will show completion and compliance data for liaisons and staff for a specific client for the current school year (default) or previous years. 
+Red Flag Report - A report which will show all clients which have districts that have less than 20% completion, within one month of their launch date. This report will show a breakdown of all at risk districts within the client’s authority. This will also have filters depending on the client level, so if the client is a state client, we can filter this report by region or by district. 
+State Report - A list of compliance and completion data for all state-level options. 
+Email Domain Breakdown - A report showing statistics on official vs non-official email registration by client and option. 

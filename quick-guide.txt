@@ -1,0 +1,128 @@
+LMS Quick guide
+Stack
+Frontend
+Nuxt v3
+Tailwindcss v3
+Backend
+Laravel 12
+PHP 8.4
+Mariadb/mysql
+Repos
+Frontend Repo
+Backend repo
+Installation steps
+Frontend
+Clone the repository
+Switch to dev branch
+Pull changes if any
+Install assets (bun recommended) - bun i
+Run the dev server - bun run dev --o --host
+Server available in localhost:3000
+Backend
+Requisites
+PHP 8.4 (and any extensions used by Laravel) 
+Mysqlserver or mariadb equivalent
+Mailhog, mailpit or similar (recommended for email viewing, defaults to log mailing)
+Installation
+Clone the repository
+Switch to development branch
+Pull changes if any
+Install dependencies - composer install
+Create the .env file - cp .env.example .env
+Generate the Laravel app key - php artisan key:generate
+Fill out the .env variables - Check section below for mandatory env variables
+Migrate the database once so it auto creates the database - php artisan migrate
+After it asks to create the database, say yes
+Run the migrations again but with seeders this time - php artisan migrate:fresh –seed
+Run the development server on the same domain, localhost - php artisan serve –host=localhost
+The default admin user is admin@example.com
+
+On the backend you’ll see some leftovers of a previous docker instance, it is no longer used and instead the laravel’s development server is recommended.
+Env variables
+Make sure the following are set, they’ll be mostly copied over from the example .env except the db settings
+
+LOG_CHANNEL=daily # Recomended
+
+SESSION_DRIVER=database
+SESSION_DOMAIN=localhost
+
+SANCTUM_STATEFUL_DOMAINS=localhost:3000,localhost:8000
+SCOUT_DRIVER=database
+APP_FRONTEND_URL=http://localhost:3000
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=lms # change this to your database name
+DB_USERNAME=lms # change this to your user username
+DB_PASSWORD=password # change this to your user's password
+
+Working branches & deployment
+Laravel forge auto-deploys these branches:
+Staging - into the staging server
+Production - into the production servers
+
+To work on new features, pull recent changes from the development/dev branches and create a new branch from it. When done, submit a PR to GitHub so it can be reviewed.
+Context
+User types
+We have two main types of users, with one of them dividing into multiple subtypes.
+Admin users - Access to the admin panel, management, general reports.
+Non admin users - 
+State coordinators - Assigned at the state level. Access to reports / courses of their state and anything below.
+Regional coordinators - Assigned at the regional level, Access to reports / courses of their region and anything below.
+District liaisons - Assigned at the district level. Access to reports / courses of their district and anything below
+Essential staff - Course takers
+School liaisons - Assigned to schools, course takers
+
+Course progress & reports
+Users take on courses, which are divided into lessons. Each lesson and course progress is tracked until completion. The reports tables are a series of DB tables where each night the statistics for completion are calculated across all users of that school year.
+
+Report types
+Client reports: With a client selector on top, allows us to view all that client’s options (state, region, district, whatever they’re linked to and below) general stats, with red highlighting if they’re under a threshold Admin only
+Training reports: With a state selector on top, allows us to view an entire state (and any of their child options) general stats. Admin & non-admin
+We can drill down to their regions - districts using the … button on the right
+We can view the option’s liaisons or staff directly from the top of the table or any of their options via the … button
+Note: When a non-admin tries to see these screens, they’re shown only the options they are assigned.
+Red flag reports: shows a list of clients that have any option below the desired threshold %. Has filtering by option Admin only
+Email domain breakdown report: Based on client’s email domains (configured at the client management screen) we generate stats based on how many users are registered using any of the allowed domains and how many are not. Admin only
+Program reports: If a user is marked as program leader within a program, they will have access to the Program reports where an overview of their programs and attached users is shown. Non-admin only
+
+Report generation
+Reports generate overnight (on the server) a 06:00 am NY time. On local though, you can manually run 
+php artisan app:reports
+
+Fake data generation for reports
+You can generate fake data for reports (course progress, users, regions, etc) using
+php artisan app:fake
+
+The issue
+Currently the report screens suffer from various issues, from a UX perspective but also from functionality, navigation and error handling.
+Known issues
+They’re not really tables, they’re just divs styled to look like one
+No responsiveness
+No reusable components for table display
+Navigation issues - Relies too much on the ids on the URL and sometimes it displays incorrect data.
+Example - Logging in as a state coordinator
+Shows the list of regions (intended)
+Each region has a button with: view region, view liaison (of that region) and view staff (of that region)
+When clicking on View region, redirects to the region overview (intended)
+When clicking on view staff or liaisons, shows the state staff and liaisons regardless of which region we chose (this was solved on admin by adding some buttons on top for seeing the state staff directly and fixing the popup redirection urls)
+It sometimes uses the first row of a table to display the top-level name Eg: State A liaisons. If there’s no data, it appears as “Undefined liaisons”
+There’s no breadcrumb navigation for the reports on the non-admin screens, so when drilling down its hard to go back without starting from scratch
+Popups for actions sometimes appear with weird style issues
+The “Reports” item on the topbar is not selected when viewing reports but instead Dashboard appears as current.
+In some places it relies on stores / composables that lose state on refresh
+The code is a bit of a mess
+
+
+Recommendations
+There’s a table component I created for the option management screen that is responsive and can be expanded to accommodate the reports functionality, but feel free to start one from scratch or duplicate it and customize it for reports.  Check it out at: components/ui/Table.vue
+
+There’s two ways to call the API. At the start of the project it was using some custom-made API client composables (some are even .vue files instead of .ts files) that honestly I would advise against using. Instead, I installed Nuxt Laravel Sanctum which handles most of the authentication stuff. There’s still some leftovers of the old implementation but since we’re revisiting this whole model I recommend checking:
+useSanctumFetch for api calls
+useSanctumUser for current user fetching
+useApiError (custom made) handles validation errors among other
+
+If you use VScode I recommend setting up a workspace with both projects so you don't have to jump between windows.
+
+If there’s any endpoint that you need, or any modifications to the existing ones, please don’t hesitate to ask for changes or if you feel comfortable enough, go ahead and change them to fit the reports needs. Don’t feel constrained by what’s being returned by the API but instead craft the endpoints around what you actually need.

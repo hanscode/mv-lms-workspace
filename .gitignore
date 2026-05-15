@@ -1,0 +1,17 @@
+# The two app repos are independently versioned — exclude them entirely
+mckinney-vento-lms-api/
+mckinney-vento-lms-fe/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Personal scratch
+*.local
+*.bak
