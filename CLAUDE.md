@@ -1,144 +1,300 @@
 # CLAUDE.md
 
-Guidance for Claude Code (claude.ai/code) when working in this workspace.
+## Purpose
 
-For a human-oriented setup walkthrough, see [`README.md`](./README.md).
+This file defines the **mental model, boundaries, and operating rules** for working in this multi-repository workspace.
+It is not setup documentation and not deep architecture documentation.
 
-## Workspace layout
+Think of this file as:
 
-This directory contains two independently versioned repos. Always `cd` into the right one before running commands.
+> *"How to reason about the system before writing or changing code."*
 
-- `mckinney-vento-lms-api/` — Laravel 12 / PHP 8.4 REST API, magic-link auth, MySQL.
-- `mckinney-vento-lms-fe/` — Nuxt 3 SPA (SSR disabled), Vue 3, Pinia, Tailwind.
+---
 
-## What this project is
+## Workspace Layout
 
-A learning management system for the McKinney-Vento Homeless Assistance Act program. It delivers mandatory training to a hierarchical network of users (state coordinators → regional coordinators → district liaisons → school liaisons → essential staff / community partners), tracks course/lesson progress, and produces aggregated reports for each tier of that hierarchy.
+```text
+mv-lms/
+├── mckinney-vento-lms-api/   # Laravel 12 REST API — magic-link auth, reports, programs
+└── mckinney-vento-lms-fe/    # Nuxt 3 SPA — participant UI, admin panel, reports
+```
 
-Core domain entities:
+Each repository has a **distinct responsibility and ownership boundary**.
+Crossing those boundaries unintentionally is a common source of bugs.
 
-- **Geo hierarchy**: `State` → `Region` → `District` → `School` (cascading access)
-- **Client**: organization tenant, attached to one or more geo nodes
-- **Course → Lesson → Section** (sections are polymorphic across `app/Models/Sections/*` — text, image, video, file, quiz, embed)
-- **Program**: per-client per-school-year bundle of courses with deadline + reminder schedule. Has draft (editable) and published (read-only, notifications active) phases
-- **Reports**: `Reports*` models hold pre-computed aggregations; the API reads them, the nightly `app:reports` command writes them
+---
 
-## Local dev environment
+## High-Level System Model
 
-MySQL runs in **Docker** (single container, no Sail). The API and frontend run **natively** on the host.
+- **API** owns all business logic, data persistence, access control, and report aggregation
+- **Frontend** owns UI rendering, user interaction, and state management
+- **Reports** are pre-computed nightly — the API reads them, never computes them on-demand
+
+This is a **hierarchical multi-client system** with nightly batch jobs.
+Always assume:
+
+- Access cascades downward through the geo hierarchy (State → Region → District → School)
+- Reports reflect yesterday's data — real-time computation does not happen at request time
+- Magic-link auth means no passwords — session management is Sanctum cookie-based
+
+---
+
+## Repo-Specific Rules & Guardrails
+
+### `mckinney-vento-lms-api/` (Laravel API)
+
+**Role**
+- REST API at `/api/v1/*`
+- Business logic, access control, report aggregation, Excel exports, scheduled jobs
+
+**Rules**
+- Controllers stay thin — push logic into `app/Services/*`
+- Access control is middleware-based, not Policy-based — match the existing pattern
+- Reports are pre-computed — never add real-time computation to report endpoints
+- Custom XSRF cookie/header names (`XSRF-TOKEN-MVLMS`) must stay matched — do not normalize to Sanctum defaults
+- `User::boot()` auto-detaches geo assignments on user type change — verify side effects when touching users
+- Excel exports are queued jobs — they write XLSX, upload to storage, and email the user
+- CI runs tests on SQLite — if a test passes locally (MySQL) but fails in CI, suspect MySQL-specific SQL
+- Run `./vendor/bin/pint` before committing
+
+**Critical**: Do not change the MySQL version. Production runs `mysql:8.0.45`. Laravel Pulse uses `md5()` in a generated column that breaks on MySQL 8.4+. The pinned version is deliberate.
+
+---
+
+### `mckinney-vento-lms-fe/` (Nuxt 3 SPA)
+
+**Role**
+- Web UI for participants, liaisons, coordinators, and admins
+- SPA mode (SSR disabled) — no server-rendered pages
+
+**Rules**
+- Use `useSanctumFetch` and `useSanctumUser` from `nuxt-auth-sanctum` — not legacy `.vue` composables
+- New composables go in `.ts` files — not `.vue` files
+- Handle API errors via `composables/useApiError.ts`
+- Reach for `components/Admin/ListLayout/` before hand-rolling tables
+- Do not refactor legacy backup pages unless explicitly asked
+- TypeScript is loose (`strict: false`) — don't over-invest in type coverage for existing code
+- `bun` is the preferred package manager (`bun.lockb` is current)
+
+---
+
+## Cross-Cutting Principles (Non-Negotiable)
+
+1. **KISS** — simplest solution that works
+2. **DRY** — no duplication without intent
+3. **Understand before changing** — read first, then modify
+4. **Iterative quality** — make it work, then refine
+5. **Avoid over-engineering** — no premature abstractions
+6. **Match existing patterns** — consistency over novelty
+7. **Narrative flow** — code should read clearly
+8. **Framework-first** — use Laravel/Vue/Nuxt features before custom solutions
+9. **Failure containment** — errors should be local, not systemic
+
+---
+
+## Working Model
+
+This project must be worked using a **human-in-the-loop approach**.
+
+AI is an assistant, not the decision-maker.
+
+The human is responsible for:
+
+- defining the problem
+- validating assumptions
+- choosing the implementation approach
+- reviewing side effects
+- approving production changes
+- confirming final behavior
+
+Do NOT behave like an autonomous agent.
+
+Do NOT make product assumptions without evidence from:
+
+- code
+- existing behavior
+- explicit task context
+
+When uncertain:
+
+1. trace the flow
+2. identify which repo owns the behavior
+3. propose options
+4. avoid guessing
+
+### When Context Is Insufficient
+
+If the flow cannot be traced with available information:
+
+- Stop
+- State what is missing
+- Ask the human before proceeding
+
+Do NOT proceed with assumptions.
+
+---
+
+## AI Collaboration Rules
+
+### Do
+
+- trace flows before changing code
+- identify which repo owns the behavior before making changes
+- separate hypothesis vs confirmed cause
+- analyze access control and geo-scope implications explicitly
+- propose multiple approaches when needed
+- favor minimal, safe changes
+
+### Do NOT
+
+- guess behavior
+- assume access scope without verifying middleware
+- introduce unnecessary abstractions
+- change code across repo boundaries casually or without justification
+- deploy without human approval
+- present guesses as facts
+
+---
+
+## Collaboration Philosophy
+
+→ See `AI_ENGINEERING_WORKFLOW.md` for the full framework.
+
+---
+
+## Skills
+
+Skills are defined in `.claude/skills/`.
+Skills run ONLY when explicitly invoked by the user.
+Do NOT self-trigger any skill based on perceived task completion.
+Claude MAY suggest invoking a skill when appropriate — the human decides.
+
+---
+
+## Task Workflow
+
+1. Problem
+2. Context
+3. Expected behavior
+4. Current behavior
+5. Root cause / hypothesis
+6. Options
+7. Recommendation
+8. Validation
+9. Side effects
+10. Outcome
+
+---
+
+## Task Documentation
+
+- Active tasks: `docs/tasks/`
+- Completed tasks: `docs/archive/`
+
+---
+
+## Code Quality Expectations
+
+All code changes must follow the standards defined in:
+
+→ `QUALITY_RUBRIC.md`
+
+Before proposing or applying any change, evaluate against `QUALITY_RUBRIC.md`.
+This is mandatory, not optional.
+
+Claude must:
+
+- evaluate code against the rubric
+- propose improvements
+- avoid low-quality changes
+
+---
+
+## Branching & Deployment
+
+| Branch | Auto-deploys to |
+|--------|----------------|
+| `staging` | Staging (Forge → DigitalOcean) |
+| `production` | Production (Forge → DigitalOcean) |
+
+Feature work branches off `develop`/`dev`. PRs go back to `develop`. Then `develop` → `staging` → `production`.
+
+---
+
+## Local Dev Environment
+
+MySQL runs in **Docker** (single container, workspace root). API and frontend run natively.
 
 ```bash
-# MySQL — from the workspace root (this directory)
-docker compose up -d                  # mysql:8.0.45 on host port 3307
+# MySQL — from workspace root
+docker compose up -d        # mysql:8.0.45 on host port 3307
 
 # API
 cd mckinney-vento-lms-api
-php artisan serve                     # http://localhost:8000
+php artisan serve            # http://localhost:8000
 
 # Frontend
 cd mckinney-vento-lms-fe
-bun run dev                           # http://localhost:3000
+bun run dev                  # http://localhost:3000
 ```
 
-The `docker-compose.yml` lives at the workspace root, not inside the API repo, so it doesn't pollute the team repo. The API `.env` is already configured for the Docker MySQL (`DB_HOST=127.0.0.1`, `DB_PORT=3307`, `DB_DATABASE=lms_rebuild`).
+**Do not use Laravel Sail** — this workspace uses a single MySQL Docker container (not Sail).
+The `docker-compose.yml` lives at the workspace root — it is not committed to the team repo.
 
-This workspace's local setup intentionally **does not use Laravel Sail**, even though the API repo's own `README.md` and `quick-guide.txt` describe a Sail-based workflow (which David and others on the team use). My `docker-compose.yml` lives only locally — it runs a single MySQL 8.0 container and isn't committed to the team repo. Don't push it.
+---
 
-**Do not change the MySQL version.** Production runs `8.0.45`. Laravel Pulse uses `md5()` in a generated column which breaks on MySQL 8.4+ / 9.x — the pinned version is deliberate.
+## Logging & Observability Mindset
 
-## Common commands
+- Success paths should be quiet (debug-level)
+- Errors should be visible but scoped
+- Logs are for operators, not for reconstructing execution flow
+- Report endpoints read pre-computed data — never log inside report queries
 
-### Backend (`mckinney-vento-lms-api/`)
+---
 
-```bash
-# docker compose commands run from the WORKSPACE ROOT (../), not inside the API repo
-docker compose up -d                          # Start MySQL  (workspace root)
-docker compose stop                           # Stop MySQL   (workspace root)
-php artisan serve                             # API at :8000
-php artisan migrate:fresh --seed              # Reset DB
-php artisan test                              # PHPUnit (also: --filter=TestName)
-./vendor/bin/pint                             # Format PHP
-php artisan scribe:generate                   # Regenerate API docs at /docs
-php artisan app:reports                       # Manually run nightly aggregation
-php artisan app:fake                          # Generate fake report data
-php artisan cache:clear && php artisan config:clear && php artisan route:clear
-```
+## Claude Code – Commit Rules (Mandatory)
 
-### Frontend (`mckinney-vento-lms-fe/`)
+- NO AI attribution in commit messages
+- NO co-author lines such as:
+  - `Co-Authored-By: Claude`
+  - `Co-Authored-By: Anthropic`
+  - `Generated with AI`
+  - `Assisted by AI`
+- All commits must have a single human author
+- The human developer fully owns and is responsible for the code
 
-```bash
-bun install                                   # or yarn install
-bun run dev                                   # Dev server :3000
-bun run build                                 # Production build
-bun run test                                  # Vitest unit tests
-bun run playwright                            # Playwright E2E
-bun run lint                                  # Prettier format
-bun run nuke                                  # Wipe node_modules + .nuxt + .output
-```
+---
 
-## Architecture notes
+## What Does NOT Belong in This File
 
-### API (Laravel)
+- Step-by-step setup → `README.md`
+- Task progress tracking → `PROJECT_STATUS.md`
+- In-flight implementation details → `docs/tasks/`
 
-- All API routes live in `routes/api.php` and are prefixed with `/api/v1`. Route file is ~415 lines, grouped by area (auth, admin users, course-management, programs, options, reports, registration).
-- **No password auth** — magic links only. `app/Http/Controllers/Auth/LoginController.php` + `app/Services/MagicLinkService.php`. Sanctum manages the session via stateful cookies. For local dev set `MAIL_MAILER=log` and grab the link from `storage/logs/laravel-*.log`.
-- **Sanctum CSRF** uses custom cookie/header names: `XSRF-TOKEN-MVLMS` / `X-XSRF-TOKEN-MVLMS`. Both API and FE config must match — don't "normalize" them.
-- **Service layer**: business logic lives in `app/Services/*` (17 services). Controllers stay thin. Report-related services are under `app/Services/Reports/`.
-- **Access control** is middleware-based, not policy-based: `admin`, `participant`, `reports:permission_type`, `resource-library`. See `app/Http/Middleware/`.
-- **User model side-effects**: `User::boot()` auto-detaches geo assignments when the user type changes. Easy to miss when debugging "missing" relationships.
-- **Reports are pre-computed**: API endpoints under `/api/v1/reports/*` read from `reports_*` tables. The nightly `app:reports` command (00:01 ET) regenerates them via `ReportService`. To test report changes locally, run that command or `app:fake` first.
-- **Excel I/O** via `maatwebsite/excel`. Exports are queued jobs (`app/Jobs/Exports/*`) that write XLSX, upload to storage, and email the requesting user.
-- **Scheduled tasks** in `routes/console.php` — magic-link expiry, idle timelog cleanup, program reminders/reports/publishing, nightly aggregation. Run any one manually via `php artisan <command>`.
-- **CI runs tests on SQLite** (`.github/workflows/testsuite.yml`). Local dev uses MySQL. If a test passes locally but fails in CI, suspect MySQL-specific SQL.
+---
 
-### Frontend (Nuxt 3)
+## Related Docs
 
-- `ssr: false` — pure SPA. No SEO concerns; no server-rendered pages.
-- **Auth: use `useSanctumFetch` and `useSanctumUser`** from the `nuxt-auth-sanctum` module. Several legacy `.vue` composables exist (`useApiFetch.vue`, `useGetCurrentUser.vue`, etc.) — do not write new code against them, and replace them when touching nearby code.
-- **API errors**: handle via `composables/useApiError.ts`. Validation responses follow Laravel's `{ message, errors: { field: [string] } }` shape.
-- **State**: Pinia stores in `store/`. Notable ones:
-  - `programBuilderStore.ts` (large, multi-step program builder)
-  - `useProgramStore.ts`, `useTakeCourseStore.ts`, `useLessonStore.ts`, `useRegistrationStore.ts`, `useReportsStore.ts`, `useOptionsStore.ts`, `optionManagementStore.ts`
-- **Pages**: `pages/admin/*` is the admin section (24 subdirs). `pages/reports/*` is for liaison/coordinator views. `pages/course/[courseid]/lesson/[lessonid]/` is the participant course viewer. `pages/registration/[code]/` handles self-service signup.
-- **Components**:
-  - `components/ui/` — design system primitives (`BaseButton`, `BaseTextInput`, `BaseDatePicker`, `BaseRichTextEditor`, `BaseStepsPanel`, etc.)
-  - `components/Admin/` — admin CRUD UIs grouped by entity
-  - `components/Admin/ListLayout/` — the reusable table+pagination+search wrapper. Prefer it over hand-rolled tables.
-  - `components/Participant/` — dashboard, course player, certificate, reports
-- **Forms**: `vee-validate` + `yup`. The Program builder uses this pattern; older course/user forms use plain refs — when adding new forms, prefer vee-validate.
-- **TypeScript is loose** (`strict: false` in `nuxt.config.ts`). Types in `types/` document API DTOs but aren't enforced at compile time.
+- `QUALITY_RUBRIC.md`
+- `AI_ENGINEERING_WORKFLOW.md`
+- `PROJECT_STATUS.md`
+- `README.md` — human setup walkthrough
+- `docs/tasks/` — active task documents
+- `docs/archive/` — completed tasks and historical reference
 
-## Conventions
+---
 
-### General
-- DRY, KISS, narrative flow. Self-documenting names beat comments.
-- Don't add comments explaining *what* code does. Only add comments for non-obvious *why* (a hidden constraint, a workaround).
-- Don't add scaffolding for hypothetical future requirements.
+## Living but Stable
 
-### Vue / Nuxt
-- Composition API with `<script setup>`.
-- New composables go in `.ts` files, not `.vue`.
-- Reach for `useSanctumFetch` before manual `useFetch` / axios.
+This file changes **infrequently**.
+If you find yourself wanting to add large explanations here, they probably belong elsewhere.
 
-### Laravel
-- Controllers stay thin — push logic into `app/Services/*`.
-- Run `./vendor/bin/pint` before committing.
-- Custom middleware for access control, not Policies (matches existing pattern).
+When in doubt:
 
-## Testing
+> Keep this file short, opinionated, and directional.
 
-- API: PHPUnit in `tests/Feature/` and `tests/Unit/`. ~36 test files. Run via `php artisan test`. CI uses SQLite.
-- FE: Vitest unit tests in `test/`. Playwright E2E in `e2e/` and `playwright/`. The E2E `auth.setup.ts` exercises the magic-link login flow.
+---
 
-## Gotchas / things that bite
-
-- The MySQL container binds host port **3307**. Both `.env` and the docker-compose file reflect this. If a brew MySQL is running on 3306, no conflict.
-- Custom XSRF cookie/header names (`XSRF-TOKEN-MVLMS`) need to stay matched on both sides.
-- The API `.env` has historically held live secrets (mail provider keys). Treat with care.
-- Bun is the preferred package manager (`bun.lockb` is current). Yarn lockfile is also present but may lag behind.
-- Some test pages and legacy backup pages exist (e.g. `pages/admin/index-backup.vue`, `pages/admin/programs-backup/`). Don't refactor them unless explicitly asked.
-
-## Documentation
-
-- API: Scribe-generated, served at http://localhost:8000/docs. Regenerate with `php artisan scribe:generate` after route changes.
-- Workspace: see `README.md` for the human setup walkthrough.
+**Status**: Stable
+**Maintained by**: Hans
+**Last updated**: 2026-05-08
