@@ -217,7 +217,8 @@ Claude must:
 | `staging` | Staging (Forge → DigitalOcean) |
 | `production` | Production (Forge → DigitalOcean) |
 
-Feature work branches off `develop`/`dev`. PRs go back to `develop`. Then `develop` → `staging` → `production`.
+Feature work branches off `staging`. PRs go back to `staging` (auto-deploys to staging server).
+When staging is verified, `staging` → `production` (auto-deploys to production).
 
 ---
 
@@ -265,6 +266,29 @@ The `docker-compose.yml` lives at the workspace root — it is not committed to 
 
 ---
 
+## Claude Code – Outgoing Artifact Rules (Mandatory)
+
+Outgoing artifacts mean anything that leaves my private workspace and reaches other people or external systems: **commit messages, PR titles, PR descriptions, PR comments, GitHub issues, Slack/Teamwork messages, release notes, code comments that ship.**
+
+When creating any outgoing artifact, Claude MUST NOT reference my private workflow tooling. Specifically:
+
+- **Local documentation paths** — no `docs/tasks/`, `docs/archive/`, `docs/deferred/`, `PROJECT_STATUS.md`, or any other path under my workspace `docs/` tree. These are my private working notes, not durable repository content.
+- **Internal workflow concepts** — no "Phase 1 / Phase 2 / Phase 4", "investigation findings", "task doc", "deferred items", or similar terminology that only makes sense to me.
+- **Private skills** — no `/final-strict-review`, `/write-update-message`, "strict review", or any other personal workflow skill. These are my tools, not project artifacts.
+- **References to prior internal iterations** — phrases like "v1 implementation", "earlier draft", "after the strict review" leak my workflow into the project history.
+
+What outgoing artifacts CAN reference:
+
+- The code itself (file paths within the repo being committed to, line numbers, symbol names)
+- Public artifacts (PR numbers, issue numbers, public commits)
+- The actual problem being solved and how the change addresses it
+- Testing performed and validation plan
+- Anyone reading the artifact months from now without my private context should understand it fully
+
+If I want to track my private workflow context, I do that locally in my workspace docs. The repository's public history should read like it was written by a contributor who only had access to the repository itself.
+
+---
+
 ## What Does NOT Belong in This File
 
 - Step-by-step setup → `README.md`
@@ -297,4 +321,4 @@ When in doubt:
 
 **Status**: Stable
 **Maintained by**: Hans
-**Last updated**: 2026-05-08
+**Last updated**: 2026-05-18

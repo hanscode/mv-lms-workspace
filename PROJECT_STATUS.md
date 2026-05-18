@@ -1,6 +1,6 @@
 # PROJECT_STATUS.md
 
-**Last Updated**: 2026-05-08
+**Last Updated**: 2026-05-18
 **Maintained by**: Hans
 
 ---
@@ -49,9 +49,10 @@
 
 ### Branch Strategy
 
-- `develop` / `dev` — feature development
-- `staging` — auto-deploys to staging (Forge)
-- `production` — auto-deploys to production (Forge)
+- Feature work branches off `staging` and PRs back into `staging`
+- `staging` — auto-deploys to staging (Forge → DigitalOcean)
+- `production` — auto-deploys to production (Forge → DigitalOcean)
+- Note: `development` (API) and `dev` (FE) are legacy integration branches — pending review for deprecation since Forge only watches `staging` and `production`
 
 ### Useful Commands
 

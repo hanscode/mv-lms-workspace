@@ -103,13 +103,17 @@ Do not accept AI output blindly — all reasoning must be validated.
 
 ## Expected Behavior
 
-## Observed Behavior
+## Current Behavior
 
-## Root Cause
+## Root Cause / Hypothesis
 
-## Fix Strategy
+## Options
+
+## Recommendation
 
 ## Validation
+
+## Side Effects
 
 ## Outcome
 ```
@@ -153,12 +157,14 @@ All changes must:
 
 ## Artifacts
 
-| File                | Purpose                                |
-| ------------------- | -------------------------------------- |
-| `CLAUDE.md`         | Project context and AI behavior rules  |
+| File | Purpose |
+| ---- | ------- |
+| `CLAUDE.md` | Project context and AI behavior rules |
 | `QUALITY_RUBRIC.md` | Code quality and engineering standards |
-| `Task documents`    | Per-issue structured documentation     |
-| `PROJECT_STATUS.md` | Overall system and project state       |
+| `AI_ENGINEERING_WORKFLOW.md` | This document — human workflow and collaboration framework |
+| `PROJECT_STATUS.md` | Overall system and project state |
+| `docs/tasks/` | Per-task structured documentation (active) |
+| `docs/archive/` | Completed tasks and historical reference |
 
 ---
 

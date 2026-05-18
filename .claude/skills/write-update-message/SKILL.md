@@ -7,13 +7,13 @@ description: Draft a clear, professional update message for stakeholders (e.g., 
 
 ## Invocation
 
-This skill may be invoked automatically when the user asks to:
+This skill runs ONLY when explicitly invoked by the user.
+Do NOT self-trigger based on perceived task completion or context.
 
-- draft an update
-- write a message for Teamwork or Slack
-- prepare a status update for a task, PR, or deployment
-
-It may also be invoked explicitly by the user.
+Typical triggers are an explicit `/write-update-message` invocation, or the user
+directly asking for the skill to be run (e.g. "use the update-message skill to
+draft this"). Claude MAY suggest invoking it when drafting an outbound message
+seems appropriate — the human decides whether to run it.
 
 ---
 
