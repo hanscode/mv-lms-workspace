@@ -1,6 +1,6 @@
 # PROJECT_STATUS.md
 
-**Last Updated**: 2026-05-18
+**Last Updated**: 2026-05-19
 **Maintained by**: Hans
 
 ---
@@ -24,15 +24,22 @@
 
 ## Recently Completed
 
-*Add completed tasks here as they are finished.*
+- **2026-05-19** — Full-name user search released to production. Multi-token queries like "Dan Jordan" now match across the admin user list, client users tab, and published program users tab. Companion FE fix resets pagination on search. See `docs/archive/2026-05-19-full-name-user-search.md`.
+- **2026-05-19** — Long-running staging↔production merge-commit divergence resolved on both repos via fast-forward after the release. New workflow step: fast-forward `staging` to `production` after every release to keep them aligned.
+- **2026-05-18** — Workspace setup and remote migration. Both team repos now point at the MV-Learning-LLC org. Workspace-level `docker-compose.yml` runs MySQL 8.0.45 in Docker for local dev.
 
 ---
 
 ## Known Issues / Deferred Items
 
-- Legacy `.vue` composables in `mckinney-vento-lms-fe/composables/` (`useApiFetch.vue`, `useGetCurrentUser.vue`, etc.) — replace when touching nearby code
-- API `.env` has historically held live secrets — rotate before sharing the repo publicly
-- Some legacy backup pages exist (`pages/admin/index-backup.vue`, `pages/admin/programs-backup/`) — do not refactor unless explicitly asked
+- **Sail re-introduction (pending)** — README in `mckinney-vento-lms-api/` describes a Sail-based local setup, but Sail isn't installed in the repo. Planning to add Sail back as the canonical local setup for one-command onboarding + bundled Mailpit. Conversation with David done; he's OK with it.
+- **Old staging API site is in manual-deploy mode** — `lms-rebuild-api.zenclients.com` lost its git integration during the org migration and can't be recovered. New staging API site is `lms-rebuild-api-new.zenclients.com` (Forge zero-downtime, auto-deploys correctly). Old site should be deleted after a stable period.
+- **GitHub branch protection unavailable on free org plan** — MV-Learning-LLC needs GitHub Team ($4/user/month) to enable branch protection on private repos. Asked Dan; pending decision.
+- **Sendgrid SMTP credentials in `mckinney-vento-lms-api/.env` are out of credits** — for local dev, `MAIL_MAILER=log` is used and links can be grabbed from `storage/logs/`. Production/staging use their own Forge env vars.
+- **DigitalOcean OAuth in Forge has been unstable since the migration** — Dan engaged Forge support for the provider state issue.
+- **Legacy `.vue` composables in `mckinney-vento-lms-fe/composables/`** (`useApiFetch.vue`, `useGetCurrentUser.vue`, etc.) — replace when touching nearby code.
+- **API `.env` has historically held live secrets** — rotate before sharing the repo publicly.
+- **Legacy backup pages** (`pages/admin/index-backup.vue`, `pages/admin/programs-backup/`) — do not refactor unless explicitly asked.
 
 ---
 
