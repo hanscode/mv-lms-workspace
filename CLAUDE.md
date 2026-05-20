@@ -224,23 +224,23 @@ When staging is verified, `staging` → `production` (auto-deploys to production
 
 ## Local Dev Environment
 
-MySQL runs in **Docker** (single container, workspace root). API and frontend run natively.
+The API stack (PHP, MySQL, Mailpit) runs via **Laravel Sail** inside the API repo. The frontend runs natively.
 
 ```bash
-# MySQL — from workspace root
-docker compose up -d        # mysql:8.0.45 on host port 3307
-
-# API
-cd mckinney-vento-lms-api
-php artisan serve            # http://localhost:8000
+# API stack — from mckinney-vento-lms-api/
+sail up -d                   # or ./vendor/bin/sail up -d
+                             # API at http://localhost:8000
+                             # Mailpit at http://localhost:8025
+                             # MySQL at 127.0.0.1:3306
 
 # Frontend
 cd mckinney-vento-lms-fe
 bun run dev                  # http://localhost:3000
 ```
 
-**Do not use Laravel Sail** — this workspace uses a single MySQL Docker container (not Sail).
-The `docker-compose.yml` lives at the workspace root — it is not committed to the team repo.
+`compose.yaml` (in the API repo) pins `mysql:8.0.45` and the PHP 8.4 Sail runtime to match production. Sail's default `sail:install` picks `mysql:8.4` and PHP 8.5 — don't accept those defaults if rerunning install for any reason.
+
+For local mail testing, all outbound mail goes to Mailpit at http://localhost:8025 — no SMTP credentials needed, no `MAIL_MAILER=log` workaround.
 
 ---
 
@@ -321,4 +321,4 @@ When in doubt:
 
 **Status**: Stable
 **Maintained by**: Hans
-**Last updated**: 2026-05-18
+**Last updated**: 2026-05-20

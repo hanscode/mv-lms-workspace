@@ -10,89 +10,80 @@ This directory is a workspace containing two independently versioned repos:
 
 | Directory | Stack | Purpose |
 |---|---|---|
-| [`mckinney-vento-lms-api/`](./mckinney-vento-lms-api/) | Laravel 12, PHP 8.4, MySQL 8.0 | REST API at `/api/v1/*`, magic-link auth, nightly report aggregation, Excel exports |
+| [`mckinney-vento-lms-api/`](./mckinney-vento-lms-api/) | Laravel 12, PHP 8.4, MySQL 8.0.45 (via Sail) | REST API at `/api/v1/*`, magic-link auth, nightly report aggregation, Excel exports |
 | [`mckinney-vento-lms-fe/`](./mckinney-vento-lms-fe/) | Nuxt 3 (SPA mode), Vue 3, Pinia, Tailwind | Web UI for participants, liaisons, coordinators, and admins |
 
 The two apps talk over HTTP using Laravel Sanctum (stateful cookie auth with custom `XSRF-TOKEN-MVLMS` headers).
 
 ## Prerequisites
 
-| Tool | Version | Notes |
-|---|---|---|
-| PHP | 8.4+ | `brew install php` |
-| Composer | 2.x | `brew install composer` |
-| Node | 18.x (per `.nvmrc`) | `nvm install 18 && nvm use 18` — newer versions usually work but aren't pinned |
-| Bun or Yarn | latest | Bun preferred (`bun.lockb` present); Yarn also supported |
-| Docker Desktop | any recent | Only used for the MySQL container — Laravel itself runs natively |
+| Tool | Notes |
+|---|---|
+| Docker Desktop | Required — the API stack (PHP, MySQL, Mailpit) runs via Laravel Sail in containers |
+| Node 18.x (per `.nvmrc`) | For the Nuxt frontend, which runs natively |
+| Bun | Preferred package manager for the FE (`bun.lockb` is current); Yarn also works |
 
-You do **not** need Laravel Sail or a system-wide MySQL install. The MySQL server runs in a single Docker container pinned to the exact prod version.
+The backend runs entirely in Docker via Sail — no native PHP/Composer install needed. The frontend runs natively for fast HMR.
 
 ## First-time setup
 
-### 1. MySQL (Docker)
+### Backend (Laravel API via Sail)
 
-From the workspace root (this directory):
-
-```bash
-docker compose up -d
-```
-
-This starts `mysql:8.0.45` on host port **3307**. The compose file lives at the workspace root (not inside the API repo) so it stays out of the team's repo. The data is persisted in a named volume (`mvlms_mvlms-mysql-data`).
-
-### 2. Backend (Laravel API)
+See [`mckinney-vento-lms-api/README.md`](./mckinney-vento-lms-api/README.md) for the full setup. Short version:
 
 ```bash
 cd mckinney-vento-lms-api
-
-# PHP deps
-composer install
-
-# .env (already present on first clone — copy if missing)
-cp -n .env.example .env
-
-# Generate app key (only if APP_KEY is empty)
-php artisan key:generate
-
-# Migrate + seed (MySQL container must already be running)
-php artisan migrate:fresh --seed
+cp .env.example .env
+# Install Sail's PHP dependencies (uses a one-shot Composer container — no host PHP needed):
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php84-composer:latest composer install --ignore-platform-reqs
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate:fresh --seed
 ```
 
-The default seeded admin user is `admin@example.com`. Login is by magic link — see [Authentication](#authentication) below for the local-dev workaround.
+Optionally add a shell alias so you can use `sail` instead of `./vendor/bin/sail`:
 
-### 3. Frontend (Nuxt SPA)
+```bash
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
+source ~/.zshrc
+```
+
+The default seeded admin is `admin@example.com`. Magic-link login works locally via the bundled Mailpit container — see [Authentication](#authentication) below.
+
+### Frontend (Nuxt SPA)
 
 ```bash
 cd mckinney-vento-lms-fe
-bun install           # or: yarn install
-bun run dev           # or: yarn dev
+bun install
+bun run dev
 ```
 
 Open http://localhost:3000.
 
 ## Running day-to-day
 
-| What | Command (from repo root) |
+| What | Command |
 |---|---|
-| Start MySQL | `docker compose up -d   # from workspace root` |
-| Stop MySQL | `docker compose stop    # from workspace root` |
-| Start API | `cd mckinney-vento-lms-api && php artisan serve` |
+| Start API stack | `cd mckinney-vento-lms-api && sail up -d` |
+| Stop API stack | `cd mckinney-vento-lms-api && sail down` |
 | Start frontend | `cd mckinney-vento-lms-fe && bun run dev` |
-| Reset DB | `cd mckinney-vento-lms-api && php artisan migrate:fresh --seed` |
-| Run API tests | `cd mckinney-vento-lms-api && php artisan test` |
+| Reset DB | `cd mckinney-vento-lms-api && sail artisan migrate:fresh --seed` |
+| Run API tests | `cd mckinney-vento-lms-api && sail artisan test` |
 | Run FE unit tests | `cd mckinney-vento-lms-fe && bun run test` |
 | Run E2E tests | `cd mckinney-vento-lms-fe && bun run playwright` |
-| Format PHP | `cd mckinney-vento-lms-api && ./vendor/bin/pint` |
+| Format PHP | `cd mckinney-vento-lms-api && sail bin pint` |
 | Format JS/Vue | `cd mckinney-vento-lms-fe && bun run lint` |
-| Re-generate API docs | `cd mckinney-vento-lms-api && php artisan scribe:generate` (served at http://localhost:8000/docs) |
+| Re-generate API docs | `cd mckinney-vento-lms-api && sail artisan scribe:generate` |
 
 ## Local environment
 
 | Service | URL | Notes |
 |---|---|---|
-| Frontend | http://localhost:3000 | Nuxt dev server |
-| API | http://localhost:8000 | `php artisan serve` |
+| Frontend | http://localhost:3000 | Nuxt dev server (native) |
+| API | http://localhost:8000 | Sail's `laravel.test` container (bound via `APP_PORT=8000` in `.env`) |
 | API docs (Scribe) | http://localhost:8000/docs | Regenerate after route changes |
-| MySQL | `127.0.0.1:3307` | Docker, user/db `lms_rebuild`, password `password` |
+| Mailpit (catches outbound mail) | http://localhost:8025 | All magic-link emails land here in local dev |
+| MySQL | `127.0.0.1:3306` | Sail's `mysql` container, user/db `lms_rebuild`, password `password` |
 
 The frontend reads `NUXT_PUBLIC_API_BASE_URL` and `NUXT_PUBLIC_API_REFERER` from the environment (defaults to the two URLs above).
 
@@ -105,7 +96,7 @@ There are no passwords. Login is magic-link only:
 3. User clicks the link → frontend posts to `POST /api/v1/login/verify` with `email`, `token`, `device_id`.
 4. API calls `Auth::login()` → Sanctum cookie issued.
 
-For local dev, set `MAIL_MAILER=log` in `mckinney-vento-lms-api/.env` so the link is written to `storage/logs/laravel-YYYY-MM-DD.log` instead of being sent. Then grab the link from the log and paste it into the browser.
+For local dev, **the link is delivered to Mailpit** (http://localhost:8025) — no external SMTP needed. Open Mailpit's web UI, find the email, click the link.
 
 ## Domain orientation
 
@@ -131,16 +122,14 @@ Run by Laravel Scheduler on a single cron entry (`* * * * * php artisan schedule
 | `app:program-publish` | 8:00 AM ET | Auto-publish scheduled programs |
 | `app:reports` | 12:01 AM ET | Nightly aggregation of all report tables |
 
-Run any of them manually with `php artisan app:reports` etc. For populating reports with fake data locally, use `php artisan app:fake`.
+Run any of them manually with `sail artisan app:reports` etc. For populating reports with fake data locally, use `sail artisan app:fake`.
 
 ## Known gotchas
 
-- The MySQL Docker container binds host port **3307**, not 3306, so a brew-installed MySQL can coexist on 3306 without conflicting. The API `.env` reflects this.
-- Laravel Pulse uses `md5()` in a generated column. This works on MySQL 5.7 and 8.0.x but **fails on MySQL 8.4 and 9.x** — that's why we pin `mysql:8.0.45` (matches production).
-- A `.env` checked into the API repo currently contains live email credentials. Rotate before sharing the repo publicly.
+- Laravel Pulse uses `md5()` in a generated column. This works on MySQL 5.7 and 8.0.x but **fails on MySQL 8.4 and 9.x** — that's why `compose.yaml` pins `mysql:8.0.45` (matches production).
 - The frontend `nuxt.config.ts` uses non-standard `XSRF-TOKEN-MVLMS` / `X-XSRF-TOKEN-MVLMS` cookie/header names. Don't "fix" them to the Sanctum defaults — the API expects this rename.
 - Some composables in `mckinney-vento-lms-fe/composables/` are still `.vue` files (e.g., `useApiFetch.vue`, `useGetCurrentUser.vue`). These are legacy; new code should use `useSanctumFetch` / `useSanctumUser` from the `nuxt-auth-sanctum` module.
-- CI runs the test suite on SQLite (`.github/workflows/testsuite.yml`), but local dev uses MySQL. If a test passes locally but fails in CI, check for MySQL-specific behavior.
+- CI runs the API test suite on SQLite (`.github/workflows/testsuite.yml`), but local dev uses MySQL via Sail. `phpunit.xml` is configured to use SQLite in-memory for tests so local matches CI — don't change that.
 
 ## Branching and deploys
 
@@ -149,12 +138,13 @@ Run any of them manually with `php artisan app:reports` etc. For populating repo
 | `staging` | Staging droplet (Forge) |
 | `production` | Production droplet (Forge) |
 
-Feature work branches off `develop`/`dev`, PRs go back to that branch. Forge handles the deploy pipeline.
+Feature work branches off `staging`, PRs go back to `staging`. After a `staging → production` release, fast-forward `staging` to `production` to keep them aligned.
 
 ## Useful references
 
 - API documentation (local): http://localhost:8000/docs
 - Laravel 12 docs: https://laravel.com/docs/12.x
+- Laravel Sail: https://laravel.com/docs/12.x/sail
 - Nuxt 3 docs: https://nuxt.com/docs
 - `nuxt-auth-sanctum`: https://manchenkoff.gitbook.io/nuxt-auth-sanctum
 
@@ -162,4 +152,6 @@ Feature work branches off `develop`/`dev`, PRs go back to that branch. Forge han
 
 Workspace-level files you may also want to read:
 - `CLAUDE.md` — guidance for Claude Code when working in this workspace
+- `PROJECT_STATUS.md` — current project state, recently completed work, known issues
+- `QUALITY_RUBRIC.md`, `AI_ENGINEERING_WORKFLOW.md` — quality standards and collaboration framework
 - `specs.txt`, `quick-guide.txt`, `task-list-with-micro-steps.md` — historical context from earlier collaborators (some details may be out of date relative to this README)
