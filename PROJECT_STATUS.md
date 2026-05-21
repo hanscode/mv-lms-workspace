@@ -18,7 +18,7 @@
 
 ## Active Tasks
 
-*No active tasks at this time.*
+- **Pre/Post Quiz Scores in Reports** (requested by Dan, 2026-05-20) — Surface pre-quiz and post-quiz scores and learning improvement on the essential staff reports. Investigation, design, and implementation plan complete; awaiting implementation. See `docs/tasks/2026-05-20-pre-post-quiz-scores-in-reports.md`.
 
 ---
 
