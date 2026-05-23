@@ -1,6 +1,6 @@
 # PROJECT_STATUS.md
 
-**Last Updated**: 2026-05-20
+**Last Updated**: 2026-05-22
 **Maintained by**: Hans
 
 ---
@@ -18,12 +18,14 @@
 
 ## Active Tasks
 
-- **Pre/Post Quiz Scores in Reports** (requested by Dan, 2026-05-20) — Surface pre-quiz and post-quiz scores and learning improvement on the essential staff reports. Investigation, design, and implementation plan complete; awaiting implementation. See `docs/tasks/2026-05-20-pre-post-quiz-scores-in-reports.md`.
+- **Pre/Post Quiz Scores in Reports** (requested by Dan, 2026-05-20) — API side fully on staging end-to-end. FE companion PR open (`mckinney-vento-lms-fe#16`) awaiting merge. After merge, validate in UI, then cut staging→production release for both repos and run `app:backfill-quiz-attempts` on production. See `docs/tasks/2026-05-20-pre-post-quiz-scores-in-reports.md`.
 
 ---
 
 ## Recently Completed
 
+- **2026-05-22** — Pre/post quiz scores feature shipped to staging (API side). `mckinney-vento-lms-api#15` added the `quiz_attempts` table, `kind` column on `quiz_sections`, three score columns on `reports_user_overview`, the nightly aggregation, and the `app:backfill-quiz-attempts` command. `mckinney-vento-lms-api#16` followed up to expose `kind` and the score fields in the API resources. Verified end-to-end on staging via tinker: `QuizSection.kind` round-trips, `ReportsUserOverview` returns the three score fields. FE companion PR (`mckinney-vento-lms-fe#16`) open. New workflow rules adopted in `CLAUDE.md` (task scope acknowledgement) and `.claude/skills/final-strict-review/SKILL.md` (spec coverage check) to prevent silent narrowing of multi-phase work.
+- **2026-05-21** — Sail PR merged to staging and production
 - **2026-05-20** — Sail re-introduction PR opened (`MV-Learning-LLC/mckinney-vento-lms-api#14`). Canonical local setup is now: `sail up -d` from the API repo brings up PHP 8.4 + MySQL 8.0.45 + Mailpit. Workspace-level `docker-compose.yml` deleted. Workspace `README.md` and `CLAUDE.md` updated to reflect Sail.
 - **2026-05-20** — Staging API migration completed. Old Forge site (`lms-rebuild-api.zenclients.com`, stuck in manual-deploy mode) deleted; new Forge site renamed onto the canonical `lms-rebuild-api.zenclients.com` domain. FE staging env var updated accordingly. Staging deployment is fully automated again.
 - **2026-05-19** — Full-name user search released to production. Multi-token queries like "Dan Jordan" now match across the admin user list, client users tab, and published program users tab. Companion FE fix resets pagination on search. See `docs/archive/2026-05-19-full-name-user-search.md`.

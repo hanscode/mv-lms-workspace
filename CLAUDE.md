@@ -193,6 +193,17 @@ Claude MAY suggest invoking a skill when appropriate — the human decides.
 
 ---
 
+## Task Scope Acknowledgement
+
+When a task doc defines multiple phases, the in-session task list MUST either:
+
+- mirror all phases, OR
+- explicitly state which phases are deferred to follow-up work and confirm with the human before proceeding.
+
+Silent narrowing (creating tasks for Phase 1 only without surfacing that Phase 2+ are being skipped) is not allowed.
+
+---
+
 ## Code Quality Expectations
 
 All code changes must follow the standards defined in:
@@ -321,4 +332,4 @@ When in doubt:
 
 **Status**: Stable
 **Maintained by**: Hans
-**Last updated**: 2026-05-20
+**Last updated**: 2026-05-22
