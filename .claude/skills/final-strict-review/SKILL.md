@@ -40,10 +40,17 @@ If repo ownership or cross-repo impact is unclear, stop and state that clearly b
 
 Before classifying ANY finding as Blocker or Improvement:
 
-1. Read the actual file — locate the specific line
-2. Confirm the issue exists in code, not assumption
-3. Check whether it is already handled elsewhere
-4. If cross-repo, verify both sides are in sync
+1. **Spec coverage check** — reread the task doc and verify each planned
+   step against this PR:
+   - ✅ Implemented in this PR
+   - ⏭️ Explicitly deferred to a follow-up (must be stated)
+   - ❌ Missing — not implemented and not acknowledged as deferred
+     If any step is ❌, that is a Blocker regardless of code quality.
+
+2. Read the actual file — locate the specific line
+3. Confirm the issue exists in code, not assumption
+4. Check whether it is already handled elsewhere
+5. If cross-repo, verify both sides are in sync
 
 If you cannot cite file + line number, it is NOT a Blocker or Improvement.
 
